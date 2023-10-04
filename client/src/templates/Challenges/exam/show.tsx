@@ -415,33 +415,39 @@ class ShowExam extends Component<ShowExamProps, ShowExamState> {
                   <Spacer size='large' />
                   <div className='exam-answers'>
                     {generatedExamQuestions[currentQuestionIndex].answers.map(
-                      ({ answer, id }) => (
-                        <label className='exam-answer-label' key={id}>
+                      (item, index) => (
+                        <label
+                          className='exam-answer-label'
+                          data-playwright-test-label={
+                            'exam-answer-label-' + String(index)
+                          }
+                          key={item.id}
+                        >
                           <input
                             aria-label={t('aria.answer')}
                             checked={
                               userExamQuestions[currentQuestionIndex].answer
-                                .id === id
+                                .id === item.id
                             }
                             className='exam-answer-input-hidden'
-                            name={id}
+                            name={item.id}
                             onChange={() =>
                               this.selectAnswer(
                                 currentQuestionIndex,
-                                id,
-                                answer
+                                item.id,
+                                item.answer
                               )
                             }
                             type='radio'
-                            value={id}
+                            value={item.id}
                           />{' '}
                           <span className='exam-answer-input-visible'>
                             {userExamQuestions[currentQuestionIndex].answer
-                              .id === id ? (
+                              .id === item.id ? (
                               <span className='exam-answer-input-selected' />
                             ) : null}
                           </span>
-                          <PrismFormatted text={convertMd(answer)} />
+                          <PrismFormatted text={convertMd(item.answer)} />
                         </label>
                       )
                     )}
