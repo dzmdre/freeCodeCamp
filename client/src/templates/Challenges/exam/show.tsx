@@ -1,5 +1,5 @@
 // Package Utilities
-import { Button } from '@freecodecamp/react-bootstrap';
+import { Alert, Col, Row, Button } from '@freecodecamp/react-bootstrap';
 import { graphql, navigate } from 'gatsby';
 
 import React, { Component, RefObject } from 'react';
@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { Dispatch } from 'redux';
 import { createSelector } from 'reselect';
-import { Container, Col, Alert, Row } from '@freecodecamp/ui';
+import { Container } from '@freecodecamp/ui';
 import { micromark } from 'micromark';
 
 // Local Utilities
@@ -355,15 +355,15 @@ class ShowExam extends Component<ShowExamProps, ShowExamState> {
       title: string;
     };
 
-    let missingPrerequisites: Prerequisite[] = [];
+    let missingPrequisites: Prerequisite[] = [];
     if (prerequisites) {
-      missingPrerequisites = prerequisites?.filter(
+      missingPrequisites = prerequisites?.filter(
         prerequisite =>
           !completedChallenges.find(({ id }) => prerequisite.id === id)
       );
     }
 
-    const qualifiedForExam = missingPrerequisites.length === 0;
+    const qualifiedForExam = missingPrequisites.length === 0;
 
     const blockNameTitle = `${t(
       `intro:${superBlock}.blocks.${block}.title`
@@ -415,39 +415,33 @@ class ShowExam extends Component<ShowExamProps, ShowExamState> {
                   <Spacer size='large' />
                   <div className='exam-answers'>
                     {generatedExamQuestions[currentQuestionIndex].answers.map(
-                      (item, index) => (
-                        <label
-                          className='exam-answer-label'
-                          data-playwright-test-label={
-                            'exam-answer-label-' + String(index)
-                          }
-                          key={item.id}
-                        >
+                      ({ answer, id }) => (
+                        <label className='exam-answer-label' key={id}>
                           <input
                             aria-label={t('aria.answer')}
                             checked={
                               userExamQuestions[currentQuestionIndex].answer
-                                .id === item.id
+                                .id === id
                             }
                             className='exam-answer-input-hidden'
-                            name={item.id}
+                            name={id}
                             onChange={() =>
                               this.selectAnswer(
                                 currentQuestionIndex,
-                                item.id,
-                                item.answer
+                                id,
+                                answer
                               )
                             }
                             type='radio'
-                            value={item.id}
+                            value={id}
                           />{' '}
                           <span className='exam-answer-input-visible'>
                             {userExamQuestions[currentQuestionIndex].answer
-                              .id === item.id ? (
+                              .id === id ? (
                               <span className='exam-answer-input-selected' />
                             ) : null}
                           </span>
-                          <PrismFormatted text={convertMd(item.answer)} />
+                          <PrismFormatted text={convertMd(answer)} />
                         </label>
                       )
                     )}
@@ -537,15 +531,15 @@ class ShowExam extends Component<ShowExamProps, ShowExamState> {
                 <Spacer size='medium' />
 
                 {qualifiedForExam ? (
-                  <Alert id='qualified-for-exam' variant='info'>
+                  <Alert id='qualified-for-exam' bsStyle='info'>
                     <p>{t('learn.exam.qualified')}</p>
                   </Alert>
                 ) : (
-                  <Alert id='not-qualified-for-exam' variant='danger'>
+                  <Alert id='not-qualified-for-exam' bsStyle='danger'>
                     <p>{t('learn.exam.not-qualified')}</p>
                     <Spacer size='small' />
                     <ul>
-                      {missingPrerequisites.map(({ title, id }) => (
+                      {missingPrequisites.map(({ title, id }) => (
                         <li key={id}>{title}</li>
                       ))}
                     </ul>
